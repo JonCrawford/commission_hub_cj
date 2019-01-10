@@ -26,12 +26,35 @@ Create a `initializers/commission_hub.rb` with your affiliates configuration fil
 CommissionHub.setup do |config|
 
   config.setup :commission_junction_v3 do |c|
+    c.base_uri = 'https://commission-detail.api.cj.com/v3'
+    c.authorization_token = "Bearer XXXXXXXXXXXXXXXXXXX"
   end
 
   config.setup :impact_radius do |c|
   end
 
 end
+```
+
+```ruby
+  @connection = CommissionHub.initialize_connection(:commission_junction_v3)
+
+  # Commissions Request
+  query_params = {
+    query: {
+      'date-type' => 'posting',
+      'start-date' => '2019-01-01',
+      'end-date' => '2019-01-7',
+      'requestor-cid' => 'XXXXXXXX'
+    }
+  }
+  @connection.commissions(mapper: ->(r){ Crack::XML.parse r }, request_params: query_params)
+
+  # Item Detail Request
+  query_params = {
+    query: { 'requestor-cid': 'XXXXXXXXX' }
+  }
+  @connection.item_detail(original_action_id, mapper: ->(r){ Crack::XML.parse r }, request_params: query_params)
 ```
 
 ## Development
@@ -55,4 +78,3 @@ expected to adhere to the [Contributor Covenant](http://contributor-covenant.org
 ## License
 
 The gem is available as open source under the terms of the [MIT License](http://opensource.org/licenses/MIT).
-
